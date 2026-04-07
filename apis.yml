@@ -1,17 +1,15 @@
 aid: home-depot
-url: 
-  https://raw.githubusercontent.com/api-evangelist/home-depot/refs/heads/main/apis.yml
+url: https://raw.githubusercontent.com/api-evangelist/home-depot/refs/heads/main/apis.yml
 modified: '2026-03-21'
 apis:
   - aid: home-depot:home-depot-api
     name: Home Depot API
     tags:
-      - Retail
+      - E-Commerce
       - Home Improvement
       - Products
-      - E-Commerce
-    image: 
-      https://kinlane-productions2.s3.amazonaws.com/apis-json/apis-json-logo.jpg
+      - Retail
+    image: https://kinlane-productions2.s3.amazonaws.com/apis-json/apis-json-logo.jpg
     baseURL: https://api.homedepot.com
     humanURL: https://developer.homedepot.com/
     properties:
