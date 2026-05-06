@@ -4,138 +4,47 @@ schema: https://raw.githubusercontent.com/api-evangelist/interface-research/main
 provider: home-depot
 providerId: home-depot
 created: '2026-05-04'
-modified: '2026-05-04'
-tags: []
-description: Machine-readable plans and pricing scaffold for this API provider. Conforms to the API Commons
-  Plans schema. Tier limits and prices are scaffold defaults; replace with provider-published values.
+modified: '2026-05-05'
+reconciled: false
+tags:
+  - Retail
+  - E-Commerce
+  - Home Improvement
+  - Supplier
+notes: The Home Depot does not operate a public developer portal with self-serve API pricing. Partner /
+  supplier integrations (item content, inventory, orders, advertising) are governed by The Home Depot
+  Supplier Hub, OneSource, and the Pro Xtra B2B program under bilateral commercial agreements; pricing
+  and rate limits are not publicly disclosed. This artifact is intentionally minimal and unreconciled.
+sources:
+  - https://corporate.homedepot.com/
+  - https://supplierhub.homedepot.com/
+description: Home Depot does not publish public API pricing. Supplier and partner integrations are
+  governed by bilateral agreements through programs like Supplier Hub, OneSource, and Pro Xtra.
 plans:
-  - id: home-depot-free
-    name: Free
-    type: freemium
-    description: Free entry tier for the home-depot API surface. Intended for evaluation, prototyping,
-      and low-volume integrations. Real limits and pricing must be reconciled with the provider's published
-      plan documentation.
-    entries:
-      - label: API Requests
-        description: Monthly API request quota across all included endpoints
-        name: api_requests
-        type: quota
-        metric: requests
-        limit: 1000
-        timeFrame: month
-        geo: global
-        domains:
-          - https://api.homedepot.com
-        unit: 1
-        price: '0.00'
-        userMultiplied: false
-      - label: Rate Limit
-        description: Maximum requests per minute on the free tier
-        name: rate_limit
-        type: rate
-        metric: requests_per_minute
-        limit: 10
-        timeFrame: minute
-        geo: global
-        domains:
-          - https://api.homedepot.com
-        unit: 1
-        price: '0.00'
-        userMultiplied: false
-    elements:
-      - name: Public Documentation
-      - name: Community Support
-      - name: Sandbox Access
-      - name: Home Depot API
-  - id: home-depot-pro
-    name: Professional
-    type: paid
-    description: Production tier for home-depot. Provides higher quotas, priority support, and access
-      to the broader API portfolio. Pricing placeholder; align with the provider's pricing page.
-    entries:
-      - label: API Requests
-        description: Monthly API request quota
-        name: api_requests
-        type: quota
-        metric: requests
-        limit: 100000
-        timeFrame: month
-        geo: global
-        domains:
-          - https://api.homedepot.com
-        unit: 1
-        price: TBD
-        userMultiplied: false
-      - label: Rate Limit
-        description: Maximum requests per minute on the professional tier
-        name: rate_limit
-        type: rate
-        metric: requests_per_minute
-        limit: 100
-        timeFrame: minute
-        geo: global
-        domains:
-          - https://api.homedepot.com
-        unit: 1
-        price: '0.00'
-        userMultiplied: false
-      - label: Overage
-        description: Per-request price after monthly quota is exceeded
-        name: overage
-        type: metered
-        metric: requests
-        limit: -1
-        timeFrame: month
-        geo: global
-        domains:
-          - https://api.homedepot.com
-        unit: 1000
-        price: TBD
-        userMultiplied: false
-    elements:
-      - name: All Production Endpoints
-      - name: Email Support
-      - name: SLA Targets
-      - name: Webhook Subscriptions
-      - name: Home Depot API
-  - id: home-depot-enterprise
-    name: Enterprise
+  - id: home-depot-supplier-partner
+    name: Supplier / Partner Access
     type: enterprise
-    description: Custom-negotiated tier for home-depot. Includes dedicated capacity, contractual SLAs,
-      security review, data residency options, and named technical account management.
+    description: API integrations with The Home Depot for catalog content, inventory, orders, advertising,
+      and Pro Xtra are negotiated under bilateral commercial agreements. Pricing typically takes the form
+      of partner-program fees, advertising spend, or vendor agreements and is not publicly disclosed.
     entries:
-      - label: API Requests
-        description: Negotiated request volume; -1 indicates uncapped subject to fair use
-        name: api_requests
+      - label: Supplier / Partner Access
+        description: Pricing and quotas negotiated bilaterally; not publicly disclosed
+        name: supplier_partner_access
         type: quota
-        metric: requests
+        metric: varies
         limit: -1
         timeFrame: month
-        geo: configurable
+        geo: US
         domains:
-          - https://api.homedepot.com
+          - https://supplierhub.homedepot.com
         unit: 1
-        price: custom
-        userMultiplied: false
-      - label: Rate Limit
-        description: Negotiated burst and steady-state rate
-        name: rate_limit
-        type: rate
-        metric: requests_per_minute
-        limit: 1000
-        timeFrame: minute
-        geo: configurable
-        domains:
-          - https://api.homedepot.com
-        unit: 1
-        price: custom
+        price: 'contact partner program'
         userMultiplied: false
     elements:
-      - name: Unlimited / Negotiated Volume
-      - name: 24/7 Dedicated Support
-      - name: Contractual SLA
-      - name: Security & Compliance Review
-      - name: Dedicated Account Manager
-      - name: Custom Data Residency
+      - name: Supplier Hub Onboarding Required
+      - name: Bilateral Agreement
       - name: Home Depot API
-maintainers: []
+maintainers:
+  - FN: Kin Lane
+    email: kin@apievangelist.com

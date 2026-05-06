@@ -8,32 +8,61 @@ alignedWith:
   dataSpecUrl: https://focus.finops.org/focus-specification/v1-3/
 provider: home-depot
 providerId: home-depot
-publisherName: home-depot
-serviceCategory: API
+publisherName: The Home Depot, Inc.
+serviceCategory: Retail / E-Commerce
 created: '2026-05-04'
-modified: '2026-05-04'
+modified: '2026-05-05'
+reconciled: false
 tags:
+  - Retail
+  - E-Commerce
+  - Home Improvement
+  - Supplier
   - FinOps
-  - Cost Management
   - FOCUS
-description: FinOps framework definition for the home-depot API surface. Provides a FOCUS-aligned mapping
-  for cost allocation, usage measurement, and unit-economics reporting across the provider's APIs.
+notes: The Home Depot does not bill suppliers or partners for API calls in a usage-meter shape; cost flows
+  through partner-program fees, advertising spend, vendor agreements, and Pro-Xtra economics. Meters below
+  capture the right shape for a supplier integration; pricing is bilateral.
+description: 'FOCUS-aligned FinOps stub for Home Depot. Partner-program / supplier-agreement economics
+  rather than public API billing.'
+sources:
+  - https://corporate.homedepot.com/
+  - https://supplierhub.homedepot.com/
+billingModel:
+  pricingCategory: Partner Program / Supplier Agreement
+  billingFrequency: Monthly
+  billingCurrency: USD
+  chargeCategories:
+    - Purchase
+    - Usage
+    - Adjustment
+    - Refund
+focusColumns:
+  ServiceName: Home Depot
+  ServiceCategory: Retail / E-Commerce
+  ProviderName: The Home Depot, Inc.
+  PublisherName: The Home Depot, Inc.
+  InvoiceIssuerName: The Home Depot, Inc.
+  PricingCategory: Bilateral
+  PricingUnit: varies
+  BillingCurrency: USD
+  ChargeCategory: Usage
 principles:
   - name: Visibility
-    description: Make API consumption costs visible to engineering, product, and finance teams in near
-      real-time.
+    description: Reconcile orders, returns, and ad-spend events through Supplier Hub reports and the
+      consuming ERP / advertising platform.
   - name: Allocation
-    description: Tag every chargeable API call with the consuming team, environment, application, and
-      feature so cost can be allocated.
+    description: Allocate fees by program (Supplier Hub catalog, OneSource ads, Pro Xtra B2B) and by
+      department / SKU within your own organization.
   - name: Optimization
-    description: Continuously evaluate request patterns, caching, batching, and tier selection to reduce
-      cost per useful unit of work.
+    description: Cost levers are negotiation of vendor terms, advertising bid optimization, and improving
+      content / data quality to reduce Supplier-Hub penalty fees.
   - name: Accountability
-    description: Establish budget owners and chargeback or showback flows for each consuming team.
+    description: Vendor-management owns the Home Depot relationship; e-commerce / advertising teams own
+      the operational programs.
 domains:
   - name: Understand Usage and Cost
     capabilities:
-      - Data Ingestion
       - Allocation
       - Reporting and Analytics
       - Anomaly Management
@@ -42,85 +71,64 @@ domains:
       - Planning and Estimating
       - Forecasting
       - Budgeting
-      - Benchmarking
       - Unit Economics
   - name: Optimize Usage and Cost
     capabilities:
-      - Architecting for Cloud
       - Rate Optimization
       - Workload Optimization
-      - Cloud Sustainability
       - Licensing and SaaS
   - name: Manage the FinOps Practice
     capabilities:
-      - FinOps Practice Operations
-      - FinOps Education and Enablement
       - Invoicing and Chargeback
       - Onboarding Workloads
       - Intersecting Disciplines
-billingModel:
-  pricingCategory: Usage-Based
-  billingFrequency: Monthly
-  billingCurrency: USD
-  chargeCategories:
-    - Usage
-    - Purchase
-    - Tax
-    - Credit
-    - Adjustment
-  chargeFrequency: Recurring
-focusColumns:
-  ServiceName: home-depot
-  ServiceCategory: Developer Tools / API
-  ProviderName: home-depot
-  PublisherName: home-depot
-  InvoiceIssuerName: home-depot
-  PricingCategory: Usage-Based
-  PricingUnit: request
-  BillingCurrency: USD
-  ChargeCategory: Usage
 meters:
-  - name: api_requests
-    description: Count of billable API requests
-    unit: request
+  - name: orders
+    description: Orders placed against the supplier through Home Depot channels
+    unit: order
     aggregation: sum
     dimensions:
-      - api
-      - endpoint
-      - tier
-      - region
-      - consumer
-  - name: data_egress
-    description: Bytes returned over the network in API responses
-    unit: GB
+      - partner_id
+      - sku
+      - channel
+      - market
+  - name: gmv
+    description: Gross merchandise value of orders
+    unit: USD
     aggregation: sum
     dimensions:
-      - api
-      - region
-      - consumer
-  - name: compute_seconds
-    description: Server-side compute consumed by the request, where applicable
-    unit: second
+      - partner_id
+      - sku
+  - name: ad_spend
+    description: Advertising / OneSource spend on Home Depot platforms
+    unit: USD
     aggregation: sum
     dimensions:
-      - api
-      - endpoint
-      - tier
+      - partner_id
+      - campaign
+  - name: returns
+    description: Return events
+    unit: event
+    aggregation: sum
+    dimensions:
+      - partner_id
+      - sku
 apis:
   - name: Home Depot API
     baseURL: https://api.homedepot.com
     tags:
-      - E-Commerce
-      - Home Improvement
-      - Products
       - Retail
+      - E-Commerce
+      - Supplier
     serviceName: Home Depot API
-    serviceCategory: API
+    serviceCategory: Retail / E-Commerce
 unitEconomics:
-  - name: Cost per 1K Requests
-    metric: billed_cost / (api_requests / 1000)
-    target: TBD
-  - name: Cost per Active Consumer
-    metric: billed_cost / active_consumers
-    target: TBD
-maintainers: []
+  - name: Effective Take Rate
+    metric: home_depot_fees / gmv
+    target: per partner agreement
+  - name: Cost per Order
+    metric: home_depot_fees / orders
+    target: per partner agreement
+maintainers:
+  - FN: Kin Lane
+    email: kin@apievangelist.com
