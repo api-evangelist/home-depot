@@ -1,0 +1,70 @@
+naftiko: 1.0.0-alpha2
+info:
+  label: Home Depot API — Retail
+  description: 'Home Depot API — Retail. 1 operations. Lead operation: Get API status. Self-contained Naftiko capability covering
+    one Home Depot business surface.'
+  tags:
+  - Home Depot
+  - Retail
+  created: '2026-05-19'
+  modified: '2026-05-19'
+binds:
+- namespace: env
+  keys:
+    HOME_DEPOT_API_KEY: HOME_DEPOT_API_KEY
+capability:
+  consumes:
+  - type: http
+    namespace: home-depot-retail
+    baseUri: https://api.homedepot.com
+    description: Home Depot API — Retail business capability. Self-contained, no shared references.
+    resources:
+    - name: status
+      path: /status
+      operations:
+      - name: getstatus
+        method: GET
+        description: Get API status
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+    authentication:
+      type: bearer
+      token: '{{env.HOME_DEPOT_API_KEY}}'
+  exposes:
+  - type: rest
+    namespace: home-depot-retail-rest
+    port: 8080
+    description: REST adapter for Home Depot API — Retail. One Spectral-compliant resource per consumed operation, prefixed
+      with /v1.
+    resources:
+    - path: /v1/status
+      name: status
+      description: REST surface for status.
+      operations:
+      - method: GET
+        name: getstatus
+        description: Get API status
+        call: home-depot-retail.getstatus
+        outputParameters:
+        - type: object
+          mapping: $.
+  - type: mcp
+    namespace: home-depot-retail-mcp
+    port: 9090
+    transport: http
+    description: MCP adapter for Home Depot API — Retail. One tool per consumed operation, routed inline through this capability's
+      consumes block.
+    tools:
+    - name: get-api-status
+      description: Get API status
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: home-depot-retail.getstatus
+      outputParameters:
+      - type: object
+        mapping: $.
