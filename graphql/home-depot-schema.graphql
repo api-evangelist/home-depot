@@ -1,0 +1,694 @@
+"""
+Home Depot Conceptual GraphQL Schema
+Based on the Home Depot REST API (https://developer.homedepot.com/)
+Covers product catalog, pricing, inventory, store data, delivery,
+Pro services, project guides, reviews, and authentication.
+"""
+
+# ─────────────────────────────────────────────
+# Authentication
+# ─────────────────────────────────────────────
+
+"""An API key credential issued to a developer partner."""
+type APIKey {
+  key: String!
+  name: String
+  createdAt: String
+  expiresAt: String
+  scopes: [String!]
+}
+
+"""A short-lived OAuth access token used to authenticate API requests."""
+type Token {
+  accessToken: String!
+  tokenType: String!
+  expiresIn: Int!
+  scope: String
+}
+
+# ─────────────────────────────────────────────
+# Catalog Hierarchy
+# ─────────────────────────────────────────────
+
+"""A top-level merchandise department (e.g. Lumber & Building Materials)."""
+type Department {
+  departmentId: ID!
+  name: String!
+  slug: String
+  sections: [Section!]
+  imageUrl: String
+}
+
+"""A section within a department (e.g. Dimensional Lumber)."""
+type Section {
+  sectionId: ID!
+  name: String!
+  department: Department
+  aisles: [Aisle!]
+}
+
+"""A physical or logical aisle within a store section."""
+type Aisle {
+  aisleId: ID!
+  aisleNumber: String
+  section: Section
+  bays: [Bay!]
+}
+
+"""A bay (shelving unit) within an aisle."""
+type Bay {
+  bayId: ID!
+  bayNumber: String
+  aisle: Aisle
+  products: [Product!]
+}
+
+"""A product category grouping related products."""
+type ProductCategory {
+  categoryId: ID!
+  name: String!
+  parentCategory: ProductCategory
+  childCategories: [ProductCategory!]
+  department: Department
+  products: [Product!]
+}
+
+# ─────────────────────────────────────────────
+# Product Identifiers
+# ─────────────────────────────────────────────
+
+"""A Stock Keeping Unit identifier."""
+type SKU {
+  skuId: ID!
+  value: String!
+  product: Product
+}
+
+"""A Universal Product Code barcode identifier."""
+type UPC {
+  upcId: ID!
+  value: String!
+  product: Product
+}
+
+"""A manufacturer-assigned model number."""
+type ModelNumber {
+  modelNumberId: ID!
+  value: String!
+  manufacturer: Manufacturer
+  product: Product
+}
+
+"""A brand or company that manufactures a product."""
+type Manufacturer {
+  manufacturerId: ID!
+  name: String!
+  website: String
+  countryOfOrigin: String
+  products: [Product!]
+}
+
+# ─────────────────────────────────────────────
+# Product Core
+# ─────────────────────────────────────────────
+
+"""Physical dimensions of a product or its shipping box."""
+type ProductDimensions {
+  lengthInches: Float
+  widthInches: Float
+  heightInches: Float
+  depthInches: Float
+  unit: String
+}
+
+"""Weight information for a product."""
+type ProductWeight {
+  value: Float
+  unit: String
+}
+
+"""A product image with URL and size metadata."""
+type ProductImage {
+  imageId: ID!
+  url: String!
+  altText: String
+  width: Int
+  height: Int
+  isPrimary: Boolean
+  type: String
+}
+
+"""Detailed attributes and specifications for a product."""
+type ProductDetails {
+  detailId: ID!
+  product: Product
+  longDescription: String
+  specifications: [Specification!]
+  features: [String!]
+  warrantyText: String
+  assemblyRequired: Boolean
+  energyStar: Boolean
+  californiaProposition65: Boolean
+}
+
+"""A single key-value specification attribute."""
+type Specification {
+  name: String!
+  value: String!
+  unit: String
+}
+
+"""A product in the Home Depot catalog."""
+type Product {
+  productId: ID!
+  sku: SKU
+  upc: UPC
+  modelNumber: ModelNumber
+  name: String!
+  brand: String
+  manufacturer: Manufacturer
+  category: ProductCategory
+  department: Department
+  description: String
+  details: ProductDetails
+  images: [ProductImage!]
+  dimensions: ProductDimensions
+  weight: ProductWeight
+  price: Price
+  availability: Availability
+  reviews: [Review!]
+  rating: Rating
+  questions: [Question!]
+  relatedProducts: [Product!]
+  bundleProducts: [Product!]
+  internetNumber: String
+  storeSkuNumber: String
+  returnPolicy: String
+  createdAt: String
+  updatedAt: String
+}
+
+# ─────────────────────────────────────────────
+# Pricing
+# ─────────────────────────────────────────────
+
+"""The base price wrapper for a product, encompassing all price tiers."""
+type Price {
+  priceId: ID!
+  product: Product
+  onlinePrice: OnlinePrice
+  storePrice: StorePrice
+  proPrice: ProPrice
+  discountedPrice: DiscountedPrice
+  bulkPrice: BulkPrice
+  currency: String!
+  wasPrice: Float
+}
+
+"""Online-channel list price."""
+type OnlinePrice {
+  value: Float!
+  currency: String!
+  effectiveDate: String
+  expiresDate: String
+}
+
+"""In-store list price, which may differ from online price."""
+type StorePrice {
+  value: Float!
+  currency: String!
+  storeId: ID
+  effectiveDate: String
+}
+
+"""Pricing available to Pro Account holders."""
+type ProPrice {
+  value: Float!
+  currency: String!
+  minimumQuantity: Int
+  proAccountRequired: Boolean!
+}
+
+"""A sale or promotional discounted price."""
+type DiscountedPrice {
+  value: Float!
+  originalValue: Float!
+  discountPercent: Float
+  promotionCode: String
+  promotionDescription: String
+  startDate: String
+  endDate: String
+}
+
+"""Tiered pricing for bulk or volume purchases."""
+type BulkPrice {
+  pricePerUnit: Float!
+  minimumQuantity: Int!
+  unit: String
+  currency: String!
+}
+
+# ─────────────────────────────────────────────
+# Availability and Fulfillment
+# ─────────────────────────────────────────────
+
+"""Aggregated availability status for a product across all channels."""
+type Availability {
+  availabilityId: ID!
+  product: Product
+  onlineAvailability: OnlineAvailability
+  storeInventory: [StoreInventory!]
+  inStoreOnly: InStoreOnly
+  onlineOnly: OnlineOnly
+  bopis: BuyOnlinePickupInStore
+  bodfs: BuyOnlineDeliverFromStore
+  discontinuedOnline: Boolean
+  clearance: Boolean
+}
+
+"""Online channel availability status."""
+type OnlineAvailability {
+  isAvailable: Boolean!
+  quantity: Int
+  backOrderDate: String
+  message: String
+}
+
+"""Per-store inventory record for a product."""
+type StoreInventory {
+  store: Store!
+  quantity: Int!
+  aisle: String
+  bay: String
+  lastUpdated: String
+}
+
+"""Marker indicating this product is only available in physical stores."""
+type InStoreOnly {
+  message: String
+  reason: String
+}
+
+"""Marker indicating this product is only available online."""
+type OnlineOnly {
+  message: String
+  reason: String
+}
+
+"""Buy Online, Pick Up In Store fulfillment option."""
+type BuyOnlinePickupInStore {
+  isEligible: Boolean!
+  pickupStores: [Store!]
+  estimatedPickupDate: String
+  curbsideAvailable: Boolean
+}
+
+"""Buy Online, Deliver From Store fulfillment option."""
+type BuyOnlineDeliverFromStore {
+  isEligible: Boolean!
+  deliveryStores: [Store!]
+  estimatedDeliveryDate: String
+  deliveryFee: Float
+}
+
+# ─────────────────────────────────────────────
+# Store
+# ─────────────────────────────────────────────
+
+"""Operating hours for a store on a given day."""
+type StoreHours {
+  dayOfWeek: String!
+  openTime: String
+  closeTime: String
+  isClosed: Boolean
+  isHolidayHours: Boolean
+}
+
+"""Services available at a store location."""
+type StoreServices {
+  proDesk: ProDesk
+  toolRentalCenter: ToolRentalCenter
+  installationServices: Boolean
+  keyDuplication: Boolean
+  truckRental: Boolean
+  propExchange: Boolean
+  recycling: Boolean
+  militaryDiscount: Boolean
+}
+
+"""The Pro Desk service within a store."""
+type ProDesk {
+  isAvailable: Boolean!
+  phoneNumber: String
+  email: String
+  hours: [StoreHours!]
+}
+
+"""The Tool Rental Center within a store."""
+type ToolRentalCenter {
+  isAvailable: Boolean!
+  phoneNumber: String
+  hours: [StoreHours!]
+  availableCategories: [String!]
+}
+
+"""A store location map or floor plan reference."""
+type StoreMap {
+  mapId: ID!
+  store: Store
+  mapUrl: String
+  svgUrl: String
+  lastUpdated: String
+}
+
+"""Detailed metadata for a store location."""
+type StoreDetails {
+  storeNumber: String!
+  address: String!
+  city: String!
+  state: String!
+  zip: String!
+  country: String!
+  latitude: Float
+  longitude: Float
+  phoneNumber: String
+  faxNumber: String
+  manager: String
+  district: String
+  region: String
+}
+
+"""A Home Depot physical store location."""
+type Store {
+  storeId: ID!
+  name: String!
+  details: StoreDetails!
+  hours: [StoreHours!]
+  services: StoreServices
+  storeMap: StoreMap
+  inventory: [StoreInventory!]
+  isActive: Boolean
+  openedDate: String
+}
+
+# ─────────────────────────────────────────────
+# Delivery Options
+# ─────────────────────────────────────────────
+
+"""Standard parcel or freight delivery."""
+type Delivery {
+  deliveryId: ID!
+  product: Product
+  estimatedDeliveryDate: String
+  fee: Float
+  isFreeShipping: Boolean
+  carrier: String
+  trackingNumber: String
+}
+
+"""White-glove appliance delivery with haul-away option."""
+type ApplianceDelivery {
+  deliveryId: ID!
+  product: Product
+  scheduledDate: String
+  installationIncluded: Boolean
+  haulAwayOldAppliance: Boolean
+  fee: Float
+  requiresPhoneConfirmation: Boolean
+}
+
+"""Furniture delivery with room-of-choice placement."""
+type FurnitureDelivery {
+  deliveryId: ID!
+  product: Product
+  scheduledDate: String
+  roomOfChoiceDelivery: Boolean
+  assemblyAvailable: Boolean
+  fee: Float
+}
+
+"""Large or heavy item delivery requiring special handling."""
+type LargeItemDelivery {
+  deliveryId: ID!
+  product: Product
+  scheduledDate: String
+  liftGateRequired: Boolean
+  curbsideOnly: Boolean
+  fee: Float
+  specialInstructions: String
+}
+
+"""Truck rental service available at Home Depot stores."""
+type TruckRental {
+  rentalId: ID!
+  store: Store
+  vehicleType: String!
+  ratePerHour: Float
+  ratePerDay: Float
+  availableNow: Boolean
+  reservationUrl: String
+}
+
+# ─────────────────────────────────────────────
+# Pro Services
+# ─────────────────────────────────────────────
+
+"""A contractor or trade professional customer."""
+type Contractor {
+  contractorId: ID!
+  name: String!
+  trade: String
+  licenseNumber: String
+  isInsured: Boolean
+  proAccount: ProAccount
+}
+
+"""A professional purchasing account for contractors and businesses."""
+type ProAccount {
+  accountId: ID!
+  companyName: String!
+  contractor: Contractor
+  creditLimit: Float
+  currentBalance: Float
+  proXtra: ProXtra
+  proCredit: ProCredit
+  assignedStore: Store
+}
+
+"""The ProXtra loyalty program for professional customers."""
+type ProXtra {
+  memberId: ID!
+  tierLevel: String
+  pointsBalance: Int
+  ytdSpend: Float
+  rewards: [ProLoyalty!]
+  enrolledAt: String
+}
+
+"""A loyalty reward earned through the ProXtra program."""
+type ProLoyalty {
+  rewardId: ID!
+  description: String!
+  value: Float
+  rewardType: String
+  expiresAt: String
+  isRedeemed: Boolean
+}
+
+"""Pro credit financing account linked to a Pro Account."""
+type ProCredit {
+  creditAccountId: ID!
+  creditLimit: Float!
+  availableCredit: Float!
+  interestRate: Float
+  paymentDueDate: String
+  minimumPayment: Float
+}
+
+# ─────────────────────────────────────────────
+# Loyalty and Gifting
+# ─────────────────────────────────────────────
+
+"""A general loyalty reward for consumer customers."""
+type LoyaltyReward {
+  rewardId: ID!
+  description: String!
+  value: Float
+  expiresAt: String
+  isRedeemed: Boolean
+  redeemedAt: String
+}
+
+"""A Home Depot gift card."""
+type GiftCard {
+  cardNumber: String!
+  balance: Float!
+  currency: String!
+  pin: String
+  isActive: Boolean
+  purchasedAt: String
+  expiresAt: String
+}
+
+# ─────────────────────────────────────────────
+# Project and Services
+# ─────────────────────────────────────────────
+
+"""A DIY or instructional project guide."""
+type ProjectGuide {
+  guideId: ID!
+  title: String!
+  difficulty: String
+  estimatedTime: String
+  estimatedCost: Float
+  steps: [String!]
+  relatedProducts: [Product!]
+  videoUrl: String
+  thumbnailUrl: String
+  tags: [String!]
+}
+
+"""A customer-initiated home improvement project."""
+type Project {
+  projectId: ID!
+  name: String!
+  description: String
+  guide: ProjectGuide
+  products: [Product!]
+  totalEstimatedCost: Float
+  status: String
+  createdAt: String
+  updatedAt: String
+}
+
+"""A professional installation service offered by Home Depot."""
+type InstallationService {
+  serviceId: ID!
+  name: String!
+  category: String
+  description: String
+  basePrice: Float
+  leadTimeInDays: Int
+  availableInZip: Boolean
+  requiresInHomeMeasure: Boolean
+  relatedProducts: [Product!]
+}
+
+"""A local advertising or promotional service for store-level campaigns."""
+type LocalAdService {
+  adServiceId: ID!
+  store: Store
+  promotionTitle: String!
+  promotionDescription: String
+  startDate: String
+  endDate: String
+  discountPercent: Float
+  applicableCategories: [String!]
+  adUrl: String
+}
+
+# ─────────────────────────────────────────────
+# Reviews and Q&A
+# ─────────────────────────────────────────────
+
+"""Aggregate rating statistics for a product."""
+type Rating {
+  ratingId: ID!
+  product: Product
+  averageRating: Float!
+  totalReviews: Int!
+  fiveStarCount: Int
+  fourStarCount: Int
+  threeStarCount: Int
+  twoStarCount: Int
+  oneStarCount: Int
+  recommendedPercent: Float
+}
+
+"""A seller or associate response to a customer review."""
+type ReviewResponse {
+  responseId: ID!
+  review: Review
+  responseText: String!
+  respondedAt: String
+  respondedBy: String
+}
+
+"""A customer review for a product."""
+type Review {
+  reviewId: ID!
+  product: Product
+  rating: Int!
+  title: String
+  body: String!
+  authorName: String
+  verifiedPurchase: Boolean
+  helpfulVotes: Int
+  notHelpfulVotes: Int
+  submittedAt: String
+  response: ReviewResponse
+  badges: [String!]
+}
+
+"""An answer to a customer question about a product."""
+type Answer {
+  answerId: ID!
+  question: Question
+  answerText: String!
+  authorName: String
+  authorType: String
+  submittedAt: String
+  helpfulVotes: Int
+}
+
+"""A customer-submitted question about a product."""
+type Question {
+  questionId: ID!
+  product: Product
+  questionText: String!
+  authorName: String
+  submittedAt: String
+  answers: [Answer!]
+  answeredCount: Int
+}
+
+# ─────────────────────────────────────────────
+# Root Operations
+# ─────────────────────────────────────────────
+
+type Query {
+  product(productId: ID!): Product
+  productBySku(sku: String!): Product
+  productByUpc(upc: String!): Product
+  products(categoryId: ID, departmentId: ID, query: String, limit: Int, offset: Int): [Product!]
+  department(departmentId: ID!): Department
+  departments: [Department!]
+  productCategory(categoryId: ID!): ProductCategory
+  store(storeId: ID!): Store
+  storesNearZip(zip: String!, radiusMiles: Int): [Store!]
+  storeInventory(storeId: ID!, productId: ID!): StoreInventory
+  price(productId: ID!): Price
+  availability(productId: ID!, storeId: ID): Availability
+  review(reviewId: ID!): Review
+  reviewsForProduct(productId: ID!, limit: Int, offset: Int): [Review!]
+  rating(productId: ID!): Rating
+  questionsForProduct(productId: ID!, limit: Int, offset: Int): [Question!]
+  projectGuide(guideId: ID!): ProjectGuide
+  projectGuides(query: String, difficulty: String, limit: Int): [ProjectGuide!]
+  installationService(serviceId: ID!): InstallationService
+  installationServices(categoryId: ID, zip: String): [InstallationService!]
+  localAdServices(storeId: ID!): [LocalAdService!]
+  proAccount(accountId: ID!): ProAccount
+  proXtraMember(memberId: ID!): ProXtra
+  giftCardBalance(cardNumber: String!, pin: String!): GiftCard
+}
+
+type Mutation {
+  createProject(name: String!, description: String): Project
+  addProductToProject(projectId: ID!, productId: ID!): Project
+  submitReview(productId: ID!, rating: Int!, title: String, body: String!): Review
+  submitQuestion(productId: ID!, questionText: String!): Question
+  submitAnswer(questionId: ID!, answerText: String!): Answer
+  redeemLoyaltyReward(rewardId: ID!): LoyaltyReward
+  generateToken(apiKey: String!): Token
+}
