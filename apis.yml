@@ -16,7 +16,7 @@ apis:
   - Home Improvement
   - Products
   - Retail
-  image: https://kinlane-productions2.s3.amazonaws.com/apis-json/apis-json-logo.jpg
+  image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
   baseURL: https://api.homedepot.com
   humanURL: https://developer.homedepot.com/
   properties:
