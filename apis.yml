@@ -4,6 +4,8 @@ tags:
 url: https://raw.githubusercontent.com/api-evangelist/home-depot/refs/heads/main/apis.yml
 modified: '2026-05-19'
 common:
+- type: AgenticAccess
+  url: agentic-access/home-depot-agentic-access.yml
 - type: DomainSecurity
   url: security/home-depot-domain-security.yml
 - type: Authentication
