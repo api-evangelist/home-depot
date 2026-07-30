@@ -1,4 +1,18 @@
 aid: home-depot
+accessModel:
+  pricing: unknown
+  onboarding: self-serve
+  trial: false
+  try_now: false
+  public: false
+  label: Self-serve signup
+  confidence: high
+  source:
+  - plans
+  - authentication
+  generated: '2026-07-22'
+  method: derived
+image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/icons/home-depot.png
 tags:
 - Fortune 100
 url: https://raw.githubusercontent.com/api-evangelist/home-depot/refs/heads/main/apis.yml
@@ -15,26 +29,20 @@ common:
 - type: LinkedIn
   url: https://www.linkedin.com/company/the-home-depot
 apis:
-- aid: home-depot:home-depot-api
-  name: Home Depot API
-  tags:
-  - E-Commerce
-  - Home Improvement
-  - Products
-  - Retail
-  image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
-  baseURL: https://api.homedepot.com
+- aid: home-depot:home-depot-retail-api
+  name: home-depot Retail API
+  description: Retail operations
   humanURL: https://developer.homedepot.com/
+  baseURL: https://api.homedepot.com
+  tags:
+  - Retail
   properties:
-  - url: https://developer.homedepot.com/
-    type: Documentation
-  - url: openapi/home-depot-home-depot-api-openapi.yml
-    type: OpenAPI
-  - url: graphql/home-depot-graphql.md
-    type: GraphQL
-  description: The Home Depot API provides access to product catalog data, inventory
-    availability, store locations, and pricing information for partners and affiliates
-    integrating with Home Depot's retail platform.
+  - type: OpenAPI
+    url: openapi/home-depot-retail-api-openapi.yml
+  - type: Documentation
+    url: https://developer.homedepot.com/
+  - type: GraphQL
+    url: graphql/home-depot-graphql.md
 description: The Home Depot is the world's largest home improvement retailer, offering
   tools, construction products, appliances, and services through stores, websites,
   and apps in the United States, Canada, and Mexico.
