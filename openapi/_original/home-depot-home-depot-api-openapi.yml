@@ -1,0 +1,50 @@
+openapi: 3.1.0
+info:
+  title: Home Depot API
+  description: >-
+    The Home Depot API provides access to product catalog data, inventory availability, store locations, and pricing information for partners and affiliates integrating with Home Depot's retail platform.
+  version: '1.0'
+  contact:
+    name: Home Depot Developer Support
+    url: https://developer.homedepot.com/
+externalDocs:
+  description: Documentation
+  url: https://developer.homedepot.com/
+servers:
+  - url: https://api.homedepot.com
+    description: Production
+tags:
+  - name: Retail
+    description: Retail operations
+security:
+  - bearerAuth: []
+paths:
+  /status:
+    get:
+      operationId: getStatus
+      summary: Get API status
+      description: >-
+        Returns the current status of the API.
+      tags:
+        - Retail
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  version:
+                    type: string
+        '401':
+          description: Unauthorized
+        '429':
+          description: Too many requests
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer

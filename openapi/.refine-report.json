@@ -1,0 +1,14 @@
+{
+  "provider": "home-depot",
+  "sources": [
+    "home-depot-retail-api-openapi.yml"
+  ],
+  "outputs": [
+    "home-depot-retail-api-openapi.yml"
+  ],
+  "archived": [],
+  "errors": [],
+  "warnings": [],
+  "notes": [],
+  "skipped": []
+}
