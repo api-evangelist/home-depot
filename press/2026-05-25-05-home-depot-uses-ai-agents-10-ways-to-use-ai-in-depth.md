@@ -1,7 +1,9 @@
 ---
 title: 'Home Depot Uses AI Agents: 10 Ways to Use AI [In-Depth ...'
 url: https://www.klover.ai/home-depot-uses-ai-agents-10-ways-to-use-ai-in-depth-analysis-2025/
-date: '2026-05-25'
+published: ''
+date_basis: harvested
+harvested: '2026-05-25'
 query: '"Home Depot" press release artificial intelligence'
 position: 5
 source: serpapi-google

@@ -1,7 +1,9 @@
 ---
 title: The Home Depot and Google Cloud Launch Agentic AI ...
 url: https://corporate.homedepot.com/news/partnerships/home-depot-and-google-cloud-launch-agentic-ai-tools-help-customers-and-associates
-date: '2026-05-25'
+published: ''
+date_basis: harvested
+harvested: '2026-05-25'
 query: '"Home Depot" press release artificial intelligence'
 position: 2
 source: serpapi-google

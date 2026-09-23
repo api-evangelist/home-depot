@@ -1,7 +1,9 @@
 ---
 title: The Home Depot Launches AI-Powered Material Lists to ...
 url: https://corporate.homedepot.com/news/company/home-depot-launches-ai-powered-material-lists-help-pros-save-time-building-complete
-date: '2026-05-25'
+published: ''
+date_basis: harvested
+harvested: '2026-05-25'
 query: '"Home Depot" press release artificial intelligence'
 position: 3
 source: serpapi-google
