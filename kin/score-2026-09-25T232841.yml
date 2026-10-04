@@ -1,21 +1,19 @@
-# Kin Score artifact — home-depot — 2026-09-01T210448
+# Kin Score artifact — home-depot — 2026-09-25T232841
 # The API Evangelist rating (https://github.com/api-evangelist/kin-score). Generated; do not edit.
 ---
 kin_score:
   slug: home-depot
-  schema_version: 0.18.0
-  scored_at: '2026-09-01'
-  run_ts: 2026-09-01T210448
-  composite: 27.9
-  band: thin
+  schema_version: 0.23.0
+  scored_at: '2026-09-25'
+  run_ts: 2026-09-25T232841
+  composite: 24.5
+  band: emerging
   facets:
-    discoverability: 53.7
-    contract_quality: 62.0
-    governance: 0.0
+    discoverability: 51.8
+    contract_quality: 51.4
+    contract_governance: 0.0
     operational_transparency: 7.9
     developer_ergonomics: 16.7
-    commercial_clarity: 13.2
-    contract_governance: 0.0
     access_clarity: 13.2
   agent_readiness:
     score: 22.9
@@ -40,6 +38,12 @@ kin_score:
       protected_resource_metadata: false
       dynamic_client_registration: false
       agentic_commerce: false
+  regulatory:
+    applies: true
+    regime: Horizontal (data, software, accessibility, platform)
+    regime_id: horizontal
+    score: 11.8
+    matched_via: fallback
   provenance:
     agentic_access: derived
     contracts:
