@@ -128,10 +128,8 @@ apis:
 unitEconomics:
   - name: Effective Take Rate
     metric: home_depot_fees / gmv
-    target: per partner agreement
   - name: Cost per Order
     metric: home_depot_fees / orders
-    target: per partner agreement
 maintainers:
   - FN: Kin Lane
     email: kin@apievangelist.com
