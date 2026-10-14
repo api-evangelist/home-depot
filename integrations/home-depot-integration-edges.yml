@@ -1,0 +1,24 @@
+generated: '2026-10-14'
+method: searched
+checked:
+- servicetitan/integrations/servicetitan-integration-edges.yml
+source:
+- servicetitan/integrations/servicetitan-integration-edges.yml
+edges:
+- partner_name: ServiceTitan (own)
+  partner: servicetitan
+  partner_match: mirror
+  mirror_match: domain
+  type: marketplace
+  relationship: platform-app
+  direction: third-party
+  channel: partner-built
+  marketplace: own
+  evidence: https://marketplace.servicetitan.com/partner/the-home-depot
+  mirror_of: servicetitan/integrations/servicetitan-integration-edges.yml
+  apps:
+  - The Home Depot
+  listing_count: 1
+  detected: '2026-10-14'
+  detected_by: mirror-platform-listings.py
+  category: Leads & Bookings
